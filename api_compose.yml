@@ -1,0 +1,58 @@
+version: "3" # 버전에 따라서 기능이 달라질수 있다고 합니다.
+
+services: # 도커에서 사용하는 컨테이너를 정의
+
+  load_balancer: #컨테이너 이름 생성
+    image: nginx:stable-bookworm # 컨테이너 이미지
+    restart: always # 언제 재 실행을 시켜줄것에 대한 값이다.
+    tty: true # 터미널 기반 에뮬레이터 동자하게 하는법 -t
+    stdin_open: true # -i 옵션으로 std out 등이 나오게 하는거
+    volumes:
+      - ./data/nginx/nginx.conf:/etc/nginx/conf.d/api.conf
+    ports: # 연결할 포트
+      - "8080:80"
+    networks: # 해당 컨테이너의 네트워크
+      network: # 네트워크 이름
+        ipv4_address: 172.19.0.2 # 네트워크 고정 아이피
+
+  app1:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    restart: always # 언제 재 실행을 시켜줄것에 대한 값이다.
+    environment:
+      - DB_HOST=${PGPOOL_HOST}
+      - DB_PORT=${PGPOOL_PORT}
+      - DB_USER=${PGPOOL_NAME}
+      - DB_PASSWORD=${PGPOOL_PASSWORD}
+      - DB_NAME=${PGPOOL_DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks: # 해당 컨테이너의 네트워크
+      network: # 네트워크 이름
+        ipv4_address: 172.19.0.3 # 네트워크 고정 아이피
+
+  app2:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    restart: always # 언제 재 실행을 시켜줄것에 대한 값이다.
+    environment:
+      - DB_HOST=${PGPOOL_HOST}
+      - DB_PORT=${PGPOOL_PORT}
+      - DB_USER=${PGPOOL_NAME}
+      - DB_PASSWORD=${PGPOOL_PASSWORD}
+      - DB_NAME=${PGPOOL_DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks: # 해당 컨테이너의 네트워크
+      network: # 네트워크 이름
+        ipv4_address: 172.19.0.4 # 네트워크 고정 아이피
+
+networks: # 네트워크 칸
+  network: # 네트워크 이름
+    external: # 외부의 네트워크를 가져오겠다는 이야기
+      name: myapi # 외부 네트워크 이름
+      # docker network create --gateway 172.19.0.1 --subnet 172.19.0.0/21 myapi
