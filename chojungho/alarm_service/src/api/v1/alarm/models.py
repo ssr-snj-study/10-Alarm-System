@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing_extensions import TypedDict
 
 
@@ -16,7 +16,7 @@ class Content(TypedDict):
 
 
 class RequestAlarm(BaseModel):
-    to_target: To
-    from_target: From
+    to: To
+    from_: From = Field(..., alias="from")
     content: Content
     subject: str
