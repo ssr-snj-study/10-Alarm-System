@@ -3,7 +3,7 @@ from typing_extensions import TypedDict
 
 
 class To(TypedDict):
-    user_id: str
+    user_id: int
 
 
 class From(TypedDict):

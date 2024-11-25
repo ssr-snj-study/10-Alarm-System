@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 from common import conf, setup_logging
 from infrastructure.rdb.rdb_postgresql import AsyncEngine
 from infrastructure.nosql.redis_client import init_redis_pool
+from api.v1.alarm.container import Container as AlarmContainer
 
 
 class Container(containers.DeclarativeContainer):
@@ -30,6 +31,6 @@ class Container(containers.DeclarativeContainer):
     )
 
     # api
-    # services_container = providers.Container(
-    #     ServicesContainer, logger=logger, postgres_engine=postgres_engine, redis_client=redis_client
-    # )
+    alarm_container = providers.Container(
+        AlarmContainer, logger=logger, postgres_engine=postgres_engine, redis_client=redis_client
+    )
