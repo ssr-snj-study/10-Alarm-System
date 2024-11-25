@@ -15,11 +15,13 @@ class AlarmServices:
     async def get_one(
         self,
         request_alarm: RequestAlarm,
-    ) -> AlarmDomain | None:
+    ) -> list[AlarmDomain] | None:
         _alarm_domain: AlarmDomain = AlarmDomain(
             user_id=request_alarm.to["user_id"],
             email=request_alarm.from_["email"],
         )
-        alarm_domain: AlarmDomain = await self.alarm_repository.one(_alarm_domain)
+        alarm_domains: list[AlarmDomain] | None = await self.alarm_repository.one(_alarm_domain)
+        if alarm_domains is None:
+            return None
 
-        return alarm_domain
+        return alarm_domains

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from api.v1.alarm.models import RequestAlarm
 
+from api.v1.alarm.domain import AlarmDomain
 from dependency_injector.wiring import inject
 from fastapi.responses import JSONResponse
 from dependency_injector.wiring import Provide
@@ -14,5 +15,9 @@ router = APIRouter(prefix="/alarm", tags=["Alarm"])
 async def post_alarm(
     request_alarm: RequestAlarm, alarm_service: AlarmServices = Depends(Provide["alarm_container.alarm_services"])
 ) -> JSONResponse:
-    await alarm_service.get_one(request_alarm)
+    # 넘어온 파라미터로 사용자 조회
+    alarm_domains: list[AlarmDomain] = await alarm_service.get_one(request_alarm)
+    print(alarm_domains)
+
+    # 사용자에게 알림전송하기위해 큐에 넣는작업
     return ...

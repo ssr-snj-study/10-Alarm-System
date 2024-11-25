@@ -16,17 +16,25 @@ class AlarmRepository:
         self.logger = logger
         self.rdb_session = rdb_session
 
-    async def one(self, alarm_domain: AlarmDomain) -> AlarmDomain | None:
+    async def one(self, alarm_domain: AlarmDomain) -> list[AlarmDomain] | None:
         async with self.rdb_session() as session:
             user_alarm_info = await session.execute(
                 select(
                     AlarmUser.user_id,
                     AlarmUser.phone_number,
                     AlarmUser.email,
-                    AlarmDevice.device_token,  # 정확한 모델의 필드 이름 사용
+                    AlarmUser.country_code,
+                    AlarmUser.created_at,
+                    AlarmDevice.device_token,
+                    AlarmDevice.last_logged_in_at,
                 )
                 .join(AlarmDevice, AlarmDevice.user_id == AlarmUser.user_id)
-                .where(AlarmUser.user_id == alarm_domain.user_id)  # 명시적으로 join 조건 추가
+                .where(AlarmUser.user_id == alarm_domain.user_id)
             )
             results = user_alarm_info.all()
-            return results
+            if not results:
+                return None
+            alarm_domains: list[AlarmDomain] = [
+                alarm_domain.from_dict(user_alarm_info._asdict()) for user_alarm_info in results
+            ]
+            return alarm_domains

@@ -9,7 +9,7 @@ class AlarmDomain:
     phone_number: str = field(default=None)
     created_at: str = field(default=None)
     device_token: str = field(default=None)
-    last_logged_int_at: str = field(default=None)
+    last_logged_in_at: str = field(default=None)
 
     @classmethod
     def from_dict(cls, d):
