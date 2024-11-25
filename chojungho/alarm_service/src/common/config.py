@@ -4,12 +4,14 @@ from os import environ
 
 class Config(BaseSettings):
     PROJECT_NAME: str = "Alarm Service"
+    VERSION: str = "0.1.0"
 
     POSTGRES_USER: str = ""
     POSTGRES_PASSWORD: str = ""
     POSTGRES_HOST: str = ""
     POSTGRES_PORT: int
     POSTGRES_DB: str = ""
+
     REDIS_HOST: str = ""
     REDIS_PORT: int
     REDIS_PASSWORD: str = ""
