@@ -32,7 +32,7 @@ class AlarmServices:
         # 큐에 넣는 작업
         alarm_domain_to_dict: dict = alarm_domain.to_dict()
         alarm_domain_to_dict.update({"message": message})
-        queue_body = json.dumps(str(alarm_domain)).encode()
+        queue_body = json.dumps(str(alarm_domain_to_dict)).encode()
         channel = self.rabbitmq.channel()
         channel.queue_declare(queue="android")
         channel.basic_publish(exchange="", routing_key="android", body=queue_body)

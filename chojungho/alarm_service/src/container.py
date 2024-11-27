@@ -34,7 +34,11 @@ class Container(containers.DeclarativeContainer):
     # RabbitMQ 리소스
     rabbimq_connection = providers.Factory(
         pika.BlockingConnection,
-        pika.ConnectionParameters(host="localhost", port=5672, credentials=pika.PlainCredentials("admin", "admin")),
+        pika.ConnectionParameters(
+            host=config()["RABBITMQ_HOST"],
+            port=config()["RABBITMQ_PORT"],
+            credentials=pika.PlainCredentials(config()["RABBITMQ_USER"], config()["RABBITMQ_PASSWORD"]),
+        ),
     )
 
     # api
