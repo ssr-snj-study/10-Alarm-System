@@ -4,6 +4,7 @@ from api.v1.alarm.repository import AlarmRepository
 from api.v1.alarm.models import RequestAlarm
 import logging
 import pika
+import json
 
 
 class AlarmServices:
@@ -29,6 +30,9 @@ class AlarmServices:
 
     async def insert_queue(self, message: str, alarm_domain: AlarmDomain) -> str | None:
         # 큐에 넣는 작업
+        alarm_domain_to_dict: dict = alarm_domain.to_dict()
+        alarm_domain_to_dict.update({"message": message})
+        queue_body = json.dumps(str(alarm_domain)).encode()
         channel = self.rabbitmq.channel()
         channel.queue_declare(queue="android")
-        channel.basic_publish(exchange="", routing_key="android", body=message)
+        channel.basic_publish(exchange="", routing_key="android", body=queue_body)
