@@ -3,15 +3,16 @@ from api.v1.alarm.domain import AlarmDomain
 from api.v1.alarm.repository import AlarmRepository
 from api.v1.alarm.models import RequestAlarm
 import logging
+import pika
 
 
 class AlarmServices:
     @inject
-    def __init__(self, logger: logging, alarm_repository: AlarmRepository):
+    def __init__(self, logger: logging, alarm_repository: AlarmRepository, rabbitmq: pika.BlockingConnection):
         self.logger = logger
         self.alarm_repository = alarm_repository
+        self.rabbitmq = rabbitmq
 
-    @inject
     async def get_one(
         self,
         request_alarm: RequestAlarm,
@@ -25,3 +26,9 @@ class AlarmServices:
             return None
 
         return alarm_domains
+
+    async def insert_queue(self, message: str, alarm_domain: AlarmDomain) -> str | None:
+        # 큐에 넣는 작업
+        channel = self.rabbitmq.channel()
+        channel.queue_declare(queue="android")
+        channel.basic_publish(exchange="", routing_key="android", body=message)

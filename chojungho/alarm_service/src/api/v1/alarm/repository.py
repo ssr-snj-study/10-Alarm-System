@@ -1,4 +1,3 @@
-# coding=utf-8
 from contextlib import AbstractAsyncContextManager
 from typing import Callable
 

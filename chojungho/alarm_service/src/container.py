@@ -3,6 +3,7 @@ from common import conf, setup_logging
 from infrastructure.rdb.rdb_postgresql import AsyncEngine
 from infrastructure.nosql.redis_client import init_redis_pool
 from api.v1.alarm.container import Container as AlarmContainer
+import pika
 
 
 class Container(containers.DeclarativeContainer):
@@ -30,7 +31,17 @@ class Container(containers.DeclarativeContainer):
         password=config.REDIS_PASSWORD,
     )
 
+    # RabbitMQ 리소스
+    rabbimq_connection = providers.Factory(
+        pika.BlockingConnection,
+        pika.ConnectionParameters(host="localhost", port=5672, credentials=pika.PlainCredentials("admin", "admin")),
+    )
+
     # api
     alarm_container = providers.Container(
-        AlarmContainer, logger=logger, postgres_engine=postgres_engine, redis_client=redis_client
+        AlarmContainer,
+        logger=logger,
+        postgres_engine=postgres_engine,
+        redis_client=redis_client,
+        rabbimq_connection=rabbimq_connection,
     )
