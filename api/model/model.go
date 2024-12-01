@@ -27,11 +27,11 @@ func (Device) TableName() string {
 
 type Message struct {
 	Id          int       `json:"id,omitempty"`
-	DeviceToken string    `json:"device_Token,omitempty"`
-	UserId      int       `json:"user_Id,omitempty"`
-	SendTime    time.Time `json:"send_time"`
-	Contents    string    `json:"contents"`
-	Receiver    string    `json:"receiver"`
+	DeviceToken string    `json:"device_token,omitempty"`
+	UserId      int       `json:"user_id,omitempty"`
+	SendTime    time.Time `json:"send_time,omitempty"`
+	Contents    string    `json:"contents,omitempty"`
+	Receiver    string    `json:"receiver,omitempty"`
 }
 
 func (Message) TableName() string {
