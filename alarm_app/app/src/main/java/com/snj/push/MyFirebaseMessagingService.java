@@ -16,11 +16,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String CHANNEL_ID = "notification push";
-    private static final String CHANNEL_NAME = "com.snj.push";
-    public static final String TAG = "Push-Event";
+    private static final String TAG = "Push-Event";
+    public static final String CHANNEL_ID = "notification push";
+    public static final String CHANNEL_NAME = "com.snj.push";
+    public static final String CHANNEL_DESCRIPTION = "This is a description of the channel.";
 
 
     @Override
