@@ -3,105 +3,91 @@
 
 ---
 
-# 8장 URL 단축기 설계
+# 10장 알림 시스템 설계
 
-## 기본 기능
+## 개략적 설계안
 
-- URL 단축
-- URL 리디렉션
-- 높은 가용성 및 규모 확장성 그리고 장애 감내
+- 알림 유형별 지원 방안
+- 연락처 정보 수집 절차
+- 알림 전송 및 수신 절차
 
-## 개략적 추정
+## 알림 유형별 지원 방안
 
-- 쓰기 연산: 매일 1억 개의 단축 URL 생성
-- 초당 쓰기 연산 1억/24/3600 = 1160
-- 읽기 연산: 초당 11,600회
-- 10년간 보관 가능한 레코드 개수는 1억*365*10 = 3650억
-- 10년간 필요한 저장 용량은 URL 평균 길이가 100일 때 365 Billion*100Byte = 36.5TB
+### IOS 푸시 알림
+  
+- 알림 제공자는 단말 토큰과 페이로드 값을 APNS(Apple Push Notification Service)에 요청하면 APNS는 IOS 단말로 알림을 보냄
+  
+### 안드로이드 푸시 알림
+  
+- IOS와 유사하게 진행되며 APNS 대신 FCM(Firebase Cloud Messaging) 사용
+  
+### SMS 메시지
+  
+- 트윌리오, 넥스모 등의 상용 서비스 이용(유료)
+  
+### 이메일
+  
+- 개인 이메일 서버 또는 제3자의 서비스 이용
 
-## API 엔드포인트
+## 연락처 정보 수집 절차
 
-- URL 단축 엔드포인트
-    - Parameter ⇒ 단축할 URL
-    - Method ⇒ POST
-    - URL ⇒ /api/v1/data/shorten
-    - Response ⇒ 단축 URL
-- URL 리디렉션 엔드포인트
-    - Parameter ⇒ 단축 URL
-    - Method ⇒ GET
-    - URL ⇒ /api/v1/shortUrl
-    - Response ⇒ 리디렉션될 원래 URL
+1. 사용자의 앱 설치 또는 계정 등록
+2. API로 사용자 정보 수집
+3. `user`와 `device` 테이블로 구성된 DB에 저장
 
-## URL 리디렉션
-- 301 Permanently Moved
-    - Location 헤더에 반환된 URL로 이전
-    - 캐시된 응답
-- 302 Found
-    - Location 헤더가 지정하는 URL에 의해 처리
-    - 원래 서버로 리디렉션
+## 알림 전송 및 수신 절차
 
-## URL 단축 플로
-- 긴 URL과 해시값은 1대1 매핑
-- 변환 및 복원이 가능해야 함
-
-## 데이터 모델
-
-- 관계형 DB에 아래와 같이 저장
-    - 테이블명: `url`
-    - 컬럼: `id`(PK), `shortUrl`, `longUrl`
-
-## 해시 함수
-
-- 해시값은 총 62개(`[0-9a-zA-Z]`)로 62^7=3.5조개의 URL을 만들 수 있으므로 7자리의 수로 만듦
-- 해시 함수 구현은 2가지 방법이 있음
-- 해시 후 충돌 해소 방법은 CRC32, MD5, SHA-1 등의 해시 함수로 축약하여 사용
-- base-62 변환 방법은 10진수 ID를 62진수로 변환하여 62개의 해시 문자와 매핑
-
-  | **해시 후 충돌 전략** | **base-62 변환** | 
-  |----------------|----------------|
-  | 단축 URL의 길이 고정  | 단축 URL 길이는 가변적 |
-  | ID 생성기 필요없음    | ID 생성기 필요(유일성) |
-  | 충돌 해소 필요       | 보안상 문제         |
+1. 서비스는 알림 시스템으로 API 요청
+2. 캐시 또는 DB에 저장된 사용자 및 단말 정보 검증
+3. 메시지 큐에 알림 전송
+4. 작업 서버는 메시지큐에서 전달 받은 알림을 제3자 제공 서비스(APNS, FCM, …)로 다시 전달
+5. 제3자 서비스는 사용자 단말로 알림 전송
 
 ## 상세 설계
 
-- 긴 URL 입력 → DB 확인 → 있으면 반환, 없으면 단축 URL 생성 후 반환
-- URL 단축기는 쓰기보다 읽기를 자주하는 시스템이므로 1:1 매핑(`단축-원래`) 캐싱 사용
+### 안정성
+
+- 데이터 손실 방지을 위해 알림 로그 DB 사용 가능
+- 알림 중복 전송 방지를 위해 중복 탐지
+
+### 추가로 필요한 컴포넌트 및 고려사항
+    
+- 알림 템플릿을 정해 알림 형식을 일관성 있게 생성
+- 알림 설정을 사용자가 변경할 수 있도록 설계
+- 전송률 제한으로 알림 설정을 유지할 수 있도록 설계
+- 알림 실패 시 재시도
+- 보안을 위해 인증 승인된 사용자만 푸시 알림
+- 큐 모니터링으로 큐에 얼마나 쌓이는지 확인
+- 알림 확인율, 클릭율 등의 이벤트 추적
+
+### 수정된 설계안
+
+![Design](./images/final_design.png)
 
 ## 마무리
 
-- 처리율 제한 장치, 웹 서버의 규모 확장, DB 규모, 데이터 분석 솔루션, 가용성, 데이터 일관성, 안정성에 대한 내용을 심층적으로 분석 가능
-
-## 참고문헌
-
-[1] [**REST API Tutorial**](https://www.restapitutorial.com/)  
-[2] [**Bloom filter**](https://en.wikipedia.org/wiki/Bloom_filter)
+- 중요 정보를 계속 알려주기 위해 알림은 필수 요소임
+- 컴포넌트 사이 결합도를 낮추기 위해서는 메시지 큐를 적극적으로 사용해야 함
+- 알림 전송 최적화를 위해 아래의 조건을 만족 해야함
+  - 안전성 향상
+  - 보안
+  - 이벤트 추적 및 모니터링
+  - 사용자 설정
+  - 전송률 제한
 
 ---
 
 # Result
 
-## URL Shortcut Architecture
+## Notification Architecture
 
-![URL Shortcut Architecture](./images/architecture.png)
+![Notification Architecture](./images/architecture.png)
 
-## Web Server
+## Android
 
-![Web Page](./images/web_page.png)
+![Android](./images/android.png)
 
-### Load Balance
+### Alarm
 
-![Load Balance](./images/load_balance.png)
-
-### URL Redirection
-
-- FastAPI 기본 모듈인 [RedirectResponse](https://fastapi.tiangolo.com/it/advanced/custom-response/#redirectresponse) 사용
-- Response 받았을 때 응답 코드는 307 
-
-![Response](./images/api_response.png)
-
-## Database and Cache
-
-![Database](./images/api_response.png)
-
-![Cache](./images/postgres_table.png)
+![Notification](./images/first_notification.png)
+![Notification](./images/last_notification.png)
