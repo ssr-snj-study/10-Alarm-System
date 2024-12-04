@@ -89,7 +89,7 @@
 
 ## Database
 
-![Android](./images/database.png)
+![Database](./images/database.png)
 
 ### Alarm
 
