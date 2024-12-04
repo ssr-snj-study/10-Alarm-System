@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "alarm_app"
 include(":app")
+ 

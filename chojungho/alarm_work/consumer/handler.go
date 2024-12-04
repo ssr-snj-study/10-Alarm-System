@@ -43,8 +43,9 @@ func initFirebaseApp() *messaging.Client {
 func sendNotification(client *messaging.Client, token, title, body string) {
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
-			Title: title,
-			Body:  body,
+			Title:    title,
+			Body:     body,
+			ImageURL: "",
 		},
 		Token: token,
 	}
