@@ -28,7 +28,7 @@ func main() {
 
 	// 4. 큐 선언
 	q, err := ch.QueueDeclare(
-		"android",
+		"Android",
 		false,
 		false,
 		false,
@@ -39,11 +39,11 @@ func main() {
 		log.Fatalf("Failed to declare a queue: %v", err)
 	}
 
-	// 5. 메시지 소비
+	// RabbitMQ 메시지 소비
 	msgs, err := ch.Consume(
 		q.Name,
 		"",
-		true,
+		false, // 수동 ACK
 		false,
 		false,
 		false,
