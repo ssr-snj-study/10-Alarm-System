@@ -25,6 +25,7 @@ class AlarmDevice(Base):
 
     id = mapped_column(BigInteger, primary_key=True)
     device_token = mapped_column(String, nullable=False)
+    device_type = mapped_column(Integer, nullable=False)
     user_id = mapped_column(BigInteger, ForeignKey("alarm_user.user_id", ondelete="CASCADE"))
     last_logged_in_at = mapped_column(TIMESTAMP)
 

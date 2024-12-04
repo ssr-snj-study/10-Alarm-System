@@ -28,11 +28,12 @@ class AlarmServices:
 
         return alarm_domains
 
-    async def insert_queue(self, message: str, alarm_domain: AlarmDomain) -> str | None:
+    async def insert_queue(self, message: str, alarm_domain: AlarmDomain) -> None:
         # 큐에 넣는 작업
         alarm_domain_to_dict: dict = alarm_domain.to_dict()
         alarm_domain_to_dict.update({"message": message})
         queue_body = json.dumps(str(alarm_domain_to_dict)).encode()
         channel = self.rabbitmq.channel()
-        channel.queue_declare(queue="android")
-        channel.basic_publish(exchange="", routing_key="android", body=queue_body)
+        device_type = {1: "Android", 2: "ios", 3: "sms", 4: "email"}
+        channel.queue_declare(queue=device_type[alarm_domain.device_type])
+        channel.basic_publish(exchange="", routing_key=device_type[alarm_domain.device_type], body=queue_body)

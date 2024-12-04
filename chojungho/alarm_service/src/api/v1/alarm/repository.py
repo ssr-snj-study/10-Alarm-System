@@ -25,6 +25,7 @@ class AlarmRepository:
                     AlarmUser.country_code,
                     AlarmUser.created_at,
                     AlarmDevice.device_token,
+                    AlarmDevice.device_type,
                     AlarmDevice.last_logged_in_at,
                 )
                 .join(AlarmDevice, AlarmDevice.user_id == AlarmUser.user_id)

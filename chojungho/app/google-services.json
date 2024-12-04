@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520565240270",
+    "project_id": "cjhalarmservice",
+    "storage_bucket": "cjhalarmservice.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520565240270:android:14669cc8ec934d5306fb9f",
+        "android_client_info": {
+          "package_name": "com.example.alarm_device"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgWf_Orls6y1WcizLeqxl_8dDCeaFo3iE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

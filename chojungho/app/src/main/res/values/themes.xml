@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!--    <style name="Theme.Alarm_device" parent="android:Theme.Material.Light.NoActionBar" />-->
+
+    <!-- AppCompat 기반 테마 -->
+    <style name="Theme.Alarm_device" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 기본 색상을 정의 (원하는 색상으로 변경 가능) -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+    </style>
+
+</resources>
