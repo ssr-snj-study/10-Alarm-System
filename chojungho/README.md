@@ -85,16 +85,16 @@
 
 
 1. 알림 서버에 알림 API호출실행
-![img.png](img.png)
+![img.png](./images/img.png)
 </br>
 2. 메세지큐(Rabbitmq)에 메세지가 전송이된다.
-![img_4.png](img_4.png)
+![img_4.png](./images/img_4.png)
 </br>
 3. 컨슈머서버에서 해당 메세지를 읽어서 FCM으로 전송
-![img_3.png](img_3.png)
+![img_3.png](./images/img_3.png)
 </br>
 4. 알림 수신
-</br>![img_1.png](img_1.png)
+</br>![img_1.png](./images/img_1.png)
 
 
 
