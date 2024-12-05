@@ -86,8 +86,8 @@
 
 1. 알림 서버에 알림 API호출실행
 ![img.png](./images/img.png)
-</br>
-2. 메세지큐(Rabbitmq)에 메세지가 전송이된다.
+
+3. 메세지큐(Rabbitmq)에 메세지가 전송이된다.
 ![img_4.png](./images/img_4.png)
 
 
