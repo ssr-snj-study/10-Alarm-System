@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "585658846353",
+    "project_id": "test-879c6",
+    "storage_bucket": "test-879c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585658846353:android:92f1b9014011e2b25b8330",
+        "android_client_info": {
+          "package_name": "alarm.desgin.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdotbs0ZPEguD2lKGqGa0HR5KKdcIpnOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

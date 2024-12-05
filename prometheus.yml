@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s  # 기본 수집 주기
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']  # Prometheus 자체를 모니터링
+
+  - job_name: 'example_service'
+    static_configs:
+      - targets: ['example-service:1234']  # 실제 서비스 메트릭 엔드포인트
