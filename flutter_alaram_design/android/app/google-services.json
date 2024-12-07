@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "585658846353",
+    "firebase_url": "https://test-879c6-default-rtdb.firebaseio.com",
+    "project_id": "test-879c6",
+    "storage_bucket": "test-879c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585658846353:android:4bbe0f801ecedfff5b8330",
+        "android_client_info": {
+          "package_name": "com.example.flutter_alaram_design"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdotbs0ZPEguD2lKGqGa0HR5KKdcIpnOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585658846353:android:3d5c35c663aa07b15b8330",
+        "android_client_info": {
+          "package_name": "flutter.alaram.design"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdotbs0ZPEguD2lKGqGa0HR5KKdcIpnOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
