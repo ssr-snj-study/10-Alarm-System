@@ -17,7 +17,6 @@ func checkCacheUser(data *model.Message) int {
 func checkUser(data *model.Message) (int, error) {
 	db := config.DB()
 	device := &model.Device{}
-	fmt.Println("test11 ", data.DeviceToken)
 	if res := db.Where("device_token = ?", data.DeviceToken).Find(device); res.Error != nil {
 		fmt.Println("test12 ", res.Error)
 		return 0, res.Error

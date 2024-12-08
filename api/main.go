@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api/cmd/alarm"
+	"api/cmd"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -14,7 +14,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Route => handler
-	alarm.AlarmRoute(e)
+	cmd.Route(e)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

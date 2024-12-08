@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,6 +25,7 @@ void main() async {
   String? token = await messaging.getToken();
   if (token != null) {
     print("FCM 토큰: $token");
+    sendTokenToServer(token);
   } else {
     print("FCM 토큰을 가져올 수 없습니다.");
   }
@@ -58,5 +61,21 @@ class MyHomePage extends StatelessWidget {
         child: Text("Wait for Push Notifications!"),
       ),
     );
+  }
+}
+
+void sendTokenToServer(String token) async {
+  final url = 'http://127.0.0.1:1323/api/v1/SetDevice';  // 서버 API URL
+  var http;
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {"Content-Type": "application/json"},
+    body: json.encode({"device_Token": token, "user_id": 1}),
+  );
+
+  if (response.statusCode == 200) {
+    print("Token sent successfully");
+  } else {
+    print("Failed to send token");
   }
 }
