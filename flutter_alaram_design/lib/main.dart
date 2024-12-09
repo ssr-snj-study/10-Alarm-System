@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'notification_service.dart';  // 로컬 알림 서비스 import
 import 'notification_handler.dart'; // 메시지 핸들링 서비스 import
 import 'firebase_options.dart';  // Firebase 옵션 import
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,8 +66,8 @@ class MyHomePage extends StatelessWidget {
 }
 
 void sendTokenToServer(String token) async {
-  final url = 'http://127.0.0.1:1323/api/v1/SetDevice';  // 서버 API URL
-  var http;
+  final url = 'http://10.0.2.2:1323/api/v1/SetDevice';  // 서버 API URL
+
   final response = await http.post(
     Uri.parse(url),
     headers: {"Content-Type": "application/json"},

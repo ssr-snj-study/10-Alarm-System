@@ -5,7 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e7c2634-3c01-487b-8217-afa0f4f16e05" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/messageWorker/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/messageWorker/google-services.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/messageWorker/cmd/firebase.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/messageWorker/model/model.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/messageWorker/serviceAccountKey.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/cmd/alarm/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/cmd/alarm/db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/cmd/alarm/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/cmd/alarm/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/api/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/api/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_alaram_design/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_alaram_design/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_alaram_design/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_alaram_design/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flutter_alaram_design/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/flutter_alaram_design/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messageWorker/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/messageWorker/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messageWorker/google-services.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/messageWorker/main" beforeDir="false" afterPath="$PROJECT_DIR$/messageWorker/main" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messageWorker/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/messageWorker/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,10 +74,11 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/messageWorker" />
       <recent name="$PROJECT_DIR$/api/cmd" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build api">
+  <component name="RunManager" selected="Go Build.go build msgWorker">
     <configuration name="go build api" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="10-Alarm-System-Design" />
       <working_directory value="$PROJECT_DIR$/api" />
@@ -119,9 +134,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build msgWorker" />
         <item itemvalue="Go Build.go build api" />
         <item itemvalue="Docker.api_compose.yml: Compose Deployment" />
-        <item itemvalue="Go Build.go build msgWorker" />
         <item itemvalue="Docker.monitor_compose.yml: Compose Deployment" />
         <item itemvalue="Docker.monitor_compose.yml.prometheus: Compose Deployment" />
       </list>
@@ -130,6 +145,28 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -141,6 +178,11 @@
           <url>file://$PROJECT_DIR$/api/cmd/route.go</url>
           <line>8</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/api/cmd/alarm/service.go</url>
+          <line>40</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

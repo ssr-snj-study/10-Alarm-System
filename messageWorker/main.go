@@ -1,123 +1,64 @@
 package main
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
-	"fmt"
-	"golang.org/x/oauth2/google"
-	"io/ioutil"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"log"
-	"net/http"
+	"msgWorker/cmd"
+	"msgWorker/config"
+	"msgWorker/model"
 	"time"
 )
 
-const (
-	fcmURL      = "https://fcm.googleapis.com/v1/projects/%s/messages:send"
-	projectID   = "test-879c6"           // Firebase 프로젝트 ID
-	credentials = "google-services.json" // 서비스 계정 키 파일 경로
-)
-
-type FCMMessage struct {
-	Message FCMMessageBody `json:"message"`
-}
-
-type FCMMessageBody struct {
-	Token        string            `json:"token"`        // 대상 디바이스의 토큰
-	Notification *Notification     `json:"notification"` // 알림 내용
-	Data         map[string]string `json:"data"`         // 추가 데이터 (옵션)
-}
-
-type Notification struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
-}
-
-func getAccessToken() (string, error) {
-	// 서비스 계정 키 파일을 사용하여 Google OAuth2 인증
-	data, err := ioutil.ReadFile(credentials)
-	if err != nil {
-		return "", fmt.Errorf("failed to read credentials file: %v", err)
-	}
-
-	conf, err := google.JWTConfigFromJSON(data, "https://www.googleapis.com/auth/firebase.messaging")
-	if err != nil {
-		return "", fmt.Errorf("failed to parse credentials: %v", err)
-	}
-
-	// 토큰 가져오기
-	tokenSource := conf.TokenSource(context.Background())
-	token, err := tokenSource.Token()
-	if err != nil {
-		return "", fmt.Errorf("failed to get token: %v", err)
-	}
-
-	return token.AccessToken, nil
-}
-
-func sendMessageToFCM(token, title, body string) error {
-	// FCM 메시지 생성
-	message := FCMMessage{
-		Message: FCMMessageBody{
-			Token: token,
-			Notification: &Notification{
-				Title: title,
-				Body:  body,
-			},
-			Data: map[string]string{
-				"key1": "value1",
-				"key2": "value2",
-			},
-		},
-	}
-
-	jsonMessage, err := json.Marshal(message)
-	if err != nil {
-		return fmt.Errorf("failed to marshal message: %v", err)
-	}
-
-	// FCM URL 구성
-	url := fmt.Sprintf(fcmURL, projectID)
-
-	// Access Token 가져오기
-	accessToken, err := getAccessToken()
-	if err != nil {
-		return fmt.Errorf("failed to get access token: %v", err)
-	}
-
-	// HTTP 요청 생성
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonMessage))
-	if err != nil {
-		return fmt.Errorf("failed to create HTTP request: %v", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Content-Type", "application/json")
-
-	// HTTP 요청 보내기
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send HTTP request: %v", err)
-	}
-	defer resp.Body.Close()
-
-	// 응답 처리
-	if resp.StatusCode != http.StatusOK {
-		respBody, _ := ioutil.ReadAll(resp.Body)
-		return fmt.Errorf("failed to send message: %v, response: %s", resp.Status, string(respBody))
-	}
-
-	log.Println("Message sent successfully!")
-	return nil
-}
-
 func main() {
-	token := "cBwyTAt9RdWhgv2MhRO5il:APA91bGmJVARqmYDaOX2Ju91tiaiBl7ITe06Rzvkt2RhTmmwl2Q7Ejgin9PgFxtxMI2WwzTNKpq6DMrCDI7xxF1f5bVKwrgWJuV0Lfx2RdvOPPHJe5J5nqc" // FCM 디바이스 토큰
-	title := "Hello"
-	body := "This is a test notification"
 
-	if err := sendMessageToFCM(token, title, body); err != nil {
-		log.Fatalf("Error sending FCM message: %v", err)
+	consumer := config.KafkaConsumer()
+	// 메시지 수신
+	for {
+		msg, err := consumer.StKafka.ReadMessage(-1)
+		if err != nil {
+			log.Printf("Consumer error: %v", err)
+			continue
+		}
+		var msgVal model.Message
+		_ = json.Unmarshal([]byte(msg.Value), &msgVal)
+		log.Printf("Received message: %s from topic: %s", string(msg.Value), *msg.TopicPartition.Topic)
+		if err := cmd.SendMessageToFCM(msgVal.DeviceToken, msgVal.Contents, msgVal.Contents); err != nil {
+			log.Printf("Error sending FCM message: %v", err)
+			log.Println("Message processing failed. Retrying...")
+			retryProcessing(consumer.StKafka, &msgVal, msg)
+		}
+		_, err = consumer.StKafka.CommitMessage(msg)
+		if err != nil {
+			log.Printf("Failed to commit offset: %v", err)
+		} else {
+			log.Println("Offset committed successfully.")
+		}
 	}
+}
+
+func retryProcessing(consumer *kafka.Consumer, msgVal *model.Message, msg *kafka.Message) {
+	retries := 3                     // 최대 재시도 횟수
+	retryInterval := 2 * time.Second // 재시도 간격
+
+	for i := 1; i <= retries; i++ {
+		log.Printf("Retrying message (attempt %d/%d): %s\n", i, retries, string(msg.Value))
+		time.Sleep(retryInterval)
+
+		// 재처리 시도
+		err := cmd.SendMessageToFCM(msgVal.DeviceToken, msgVal.Contents, msgVal.Contents)
+		if err == nil {
+			// 성공 시 Offset Commit
+			_, err := consumer.CommitMessage(msg)
+			if err != nil {
+				log.Printf("Failed to commit offset after retry: %v", err)
+			} else {
+				log.Println("Offset committed successfully after retry.")
+			}
+			return
+		}
+	}
+
+	// 모든 재시도 실패
+	log.Printf("Failed to process message after %d attempts: %s\n", retries, string(msg.Value))
 }

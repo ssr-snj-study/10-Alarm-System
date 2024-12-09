@@ -3,25 +3,27 @@ package alarm
 import (
 	"api/config"
 	"api/model"
-	"fmt"
 	"strconv"
 )
 
-func checkCacheUser(data *model.Message) int {
+func checkCacheUser(data *model.Message) string {
 	cache := config.Cache()
-	userId := cache.GetRedisByKey(data.DeviceToken)
-	intUserId, _ := strconv.Atoi(userId)
-	return intUserId
+	token := cache.GetRedisByKey(strconv.Itoa(data.UserId))
+	return token
 }
 
-func checkUser(data *model.Message) (int, error) {
+func inCacheDeviceToken(userId int, token string) {
+	cache := config.Cache()
+	cache.InsertRedis(strconv.Itoa(userId), token)
+}
+
+func checkUser(data *model.Message) (string, error) {
 	db := config.DB()
 	device := &model.Device{}
-	if res := db.Where("device_token = ?", data.DeviceToken).Find(device); res.Error != nil {
-		fmt.Println("test12 ", res.Error)
-		return 0, res.Error
+	if res := db.Where("user_id = ?", data.UserId).Find(device); res.Error != nil {
+		return "", res.Error
 	}
-	return device.UserId, nil
+	return device.DeviceToken, nil
 }
 
 func checkSendOk(id int) bool {
