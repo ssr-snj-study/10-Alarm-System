@@ -20,7 +20,7 @@ func main() {
 			log.Printf("Consumer error: %v", err)
 			continue
 		}
-		var msgVal model.Message
+		var msgVal model.ResponseData
 		_ = json.Unmarshal([]byte(msg.Value), &msgVal)
 		log.Printf("Received message: %s from topic: %s", string(msg.Value), *msg.TopicPartition.Topic)
 		if err := cmd.SendMessageToFCM(msgVal.DeviceToken, msgVal.Contents, msgVal.Contents); err != nil {
@@ -33,11 +33,12 @@ func main() {
 			log.Printf("Failed to commit offset: %v", err)
 		} else {
 			log.Println("Offset committed successfully.")
+			go cmd.CreateMsg(&msgVal)
 		}
 	}
 }
 
-func retryProcessing(consumer *kafka.Consumer, msgVal *model.Message, msg *kafka.Message) {
+func retryProcessing(consumer *kafka.Consumer, msgVal *model.ResponseData, msg *kafka.Message) {
 	retries := 3                     // 최대 재시도 횟수
 	retryInterval := 2 * time.Second // 재시도 간격
 

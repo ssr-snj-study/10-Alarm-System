@@ -41,23 +41,26 @@ func SendMsg(c echo.Context) error {
 		inCacheDeviceToken(b.UserId, token)
 	}
 	// 계정별 전송률 제한
-	//if checkSendOk(b.UserId) {
-	//	//TODO 대기를 할지 다름에 보내달라고 할지 결정하기
-	//} else {
-	// queue에 값 입력
-	fmt.Println("insert message queue")
-	producer := config.KafkaProducer()
-	b.DeviceToken = token
-	msg, err := json.Marshal(b)
-	if err != nil {
+	if getSendAmount(token) > 300 {
 		data := map[string]interface{}{
-			"message": errors.New("message is not correct"),
+			"message": errors.New("message send over 300, in one minute, wait please"),
 		}
 		return c.JSON(http.StatusInternalServerError, data)
-	}
-	producer.ProduceMsg(string(msg))
-	//}
-	response := map[string]interface{}{}
+	} else {
+		fmt.Println("insert message queue")
+		producer := config.KafkaProducer()
+		b.DeviceToken = token
+		msg, err := json.Marshal(b)
+		if err != nil {
+			data := map[string]interface{}{
+				"message": errors.New("message is not correct"),
+			}
+			return c.JSON(http.StatusInternalServerError, data)
+		}
+		producer.ProduceMsg(string(msg))
+		//}
+		response := map[string]interface{}{}
 
-	return c.JSON(http.StatusOK, response)
+		return c.JSON(http.StatusOK, response)
+	}
 }

@@ -3,7 +3,9 @@ package alarm
 import (
 	"api/config"
 	"api/model"
+	"fmt"
 	"strconv"
+	"time"
 )
 
 func checkCacheUser(data *model.Message) string {
@@ -15,6 +17,10 @@ func checkCacheUser(data *model.Message) string {
 func inCacheDeviceToken(userId int, token string) {
 	cache := config.Cache()
 	cache.InsertRedis(strconv.Itoa(userId), token)
+	err := cache.IncrementWithTTL(token, time.Duration(1*time.Minute))
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func checkUser(data *model.Message) (string, error) {
@@ -26,14 +32,9 @@ func checkUser(data *model.Message) (string, error) {
 	return device.DeviceToken, nil
 }
 
-func checkSendOk(id int) bool {
+func getSendAmount(token string) int {
 	cache := config.Cache()
-	if exists, _ := cache.StCache.Exists(config.Ctx, strconv.Itoa(id)).Result(); exists > 0 {
-		return true
-	}
-	return false
-}
+	sendCnt := cache.IncrementKey(token)
 
-func insertMessageQueue() {
-
+	return sendCnt
 }

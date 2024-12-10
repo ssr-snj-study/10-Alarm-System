@@ -18,3 +18,12 @@ func CreateDevice(data *model.Device) (int, error) {
 	}
 	return device.UserId, nil
 }
+
+func CheckDevice(data *model.Device) error {
+	db := config.DB()
+	device := &model.Device{}
+	if res := db.Where("device_token = ?", data.DeviceToken).Find(device); res.Error != nil {
+		return res.Error
+	}
+	return nil
+}

@@ -8,16 +8,16 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"time"
 )
 
 var database *gorm.DB
 var stCache StCache
 var stKafka StKafka
 
-var Ctx context.Context = context.Background()
-
 type StCache struct {
 	StCache *redis.Client
+	context context.Context
 }
 
 type StKafka struct {
@@ -81,12 +81,12 @@ func alarmInit() {
 		//Password: os.Getenv("REDIS_PASSWORD"), // 비밀번호가 없다면 빈 문자열
 		Password: "snj", // 비밀번호가 없다면 빈 문자열
 	})
+	stCache.context = context.Background()
 }
 
 func (c *StCache) GetRedisByKey(key string) string {
 	// 값 가져오기
-	ctx := context.Background()
-	val, err := c.StCache.Get(ctx, key).Result()
+	val, err := c.StCache.Get(c.context, key).Result()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -95,12 +95,32 @@ func (c *StCache) GetRedisByKey(key string) string {
 
 func (c *StCache) InsertRedis(key, value string) {
 	// 키-값 설정
-	ctx := context.Background()
-
-	err := c.StCache.Set(ctx, key, value, 0).Err()
+	err := c.StCache.Set(c.context, key, value, 0).Err()
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (c *StCache) IncrementKey(key string) int {
+	keyVal, err := c.StCache.Incr(c.context, key).Result()
+	if err != nil {
+		return 0
+	}
+	return int(keyVal)
+}
+
+func (c *StCache) IncrementWithTTL(key string, time time.Duration) error {
+	_, err := c.StCache.Incr(c.context, key).Result()
+	if err != nil {
+		return err
+	}
+
+	_, err = c.StCache.Expire(c.context, key, time).Result()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func startTopic() {

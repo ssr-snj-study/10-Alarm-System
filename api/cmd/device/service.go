@@ -14,6 +14,9 @@ func InsertDevice(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, data)
 	}
+	if err := CheckDevice(b); err != nil {
+		return err
+	}
 	_, _ = CreateDevice(b)
 	return nil
 }
