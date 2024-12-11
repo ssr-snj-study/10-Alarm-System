@@ -22,7 +22,7 @@
 - TABLE: user
     - user_id : bigint
     - email: varchar
-    - country_code: integer4$$
+    - country_code: integer4
     - phone_number: integer
     - created_art: timestamp
 - TABLE: device
@@ -30,6 +30,12 @@
     - device_token: varchar
     - user_id: bigint
     - last_logged_in_at: timestamp
+- TABLE: message
+  - id: bigint
+  - user_id: bigint
+  - send_time: timestamp
+  - contents: text
+  - receiver: bigint
 
 ## 계락적 설계안
 
@@ -37,8 +43,6 @@
 - 알림 서버를 증설하고 자동으로 수평적 규모 확장이 이루어질 수 있도록 한다.
 - 메시지 큐를 이용해 시스템 컴포넌트 사이의 강한 결합을 끊는다.
 
-
-- 
 
 ## 작업 흐름
 
@@ -73,5 +77,11 @@
 ---
 
 # Result
+- 전송률 제한은 redis에 토큰 TTL을 이용해서 1분동안 유지되는 값을 입력, 메세지를 보낼때 마다 토큰 별로 갯수 증가, 1분 동안 300개 이상의 값을 보내면 오류 출력
+- MQ는 kafka의 Topic 을 만들어서 사용한다.
+- 작업서버에서 전송 오류시 MQ로 conmmit 을 보내지 않음으로 재전송을 시도한다.
+- 안드로이는 Flutter 로 작업 FireBase 를 알림서비스로 사용
+- 안드로이드는 최초 앱 실행시 자신의 firebase Token값을 API 에 post로 전송하여 데이터를 저장한다.
 
-## Cralwer Architecture
+## Alarm Architecture
+![arc](img/10_alarm_design.drawio.png)
